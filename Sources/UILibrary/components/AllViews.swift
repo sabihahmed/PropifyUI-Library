@@ -466,8 +466,8 @@ extension Color {
     }
 }
 
-struct AuctionDetailsView_Previews: PreviewProvider {
-    static var previews: some View {
+public struct AuctionDetailsView_Previews: PreviewProvider {
+    public static var previews: some View {
         AuctionDetailsView()
     }
 }

@@ -81,27 +81,31 @@ public struct PropertyCard: View {
     }
 }
 
-struct CustomTextBox: View {
+public struct CustomTextBox: View {
     // Defining your custom colors
-    let textColor = Color(red: 0/255, green: 130/255, blue: 54/255)       // #008236
-    let backgroundColor = Color(red: 220/255, green: 252/255, blue: 231/255) // #DCFCE7
+    public let textColor: Color
+    public let backgroundColor: Color
 
-    var body: some View {
+    public init(textColor: Color = Color(red: 0/255, green: 130/255, blue: 54/255), backgroundColor: Color = Color(red: 220/255, green: 252/255, blue: 231/255)) {
+        self.textColor = textColor
+        self.backgroundColor = backgroundColor
+    }
+
+    public var body: some View {
         Text(">> You're Leading")
-            .font(.custom("Poppins-Bold", size: 18)) // Using the Poppins font you installed
+            .font(.custom("Poppins-Bold", size: 18))
             .foregroundColor(textColor)
             .fontWeight(.heavy)
             .padding(.horizontal, 40)
             .padding(.bottom,10)
-            .padding(.top,10)// Space on the sides
-             // Space on the top/bottom
+            .padding(.top,10)
             .background(backgroundColor)
-            .cornerRadius(96)         // Your specific corner radius
+            .cornerRadius(96)
     }
 }
 
-struct PropertyCard_Previews: PreviewProvider {
-    static var previews: some View {
+public struct PropertyCard_Previews: PreviewProvider {
+    public static var previews: some View {
         PropertyCard(image: "villa1", lot: "Lot 1:", title: "Waves - Villa Waves - Villa", estimate: "$3.5M", status: "Status",estimatePercentage: "45% below estimate")
     }
 }

@@ -18,14 +18,21 @@ extension Color {
 
 // MARK: - Model
 
-struct Bid: Identifiable {
-    let id: String
-    var amount: Int
-    var isUser: Bool
-    var status: BidStatus = .other
+public struct Bid: Identifiable {
+    public let id: String
+    public var amount: Int
+    public var isUser: Bool
+    public var status: BidStatus = .other
+
+    public init(id: String, amount: Int, isUser: Bool, status: BidStatus = .other) {
+        self.id = id
+        self.amount = amount
+        self.isUser = isUser
+        self.status = status
+    }
 }
 
-enum BidStatus {
+public enum BidStatus {
     case leading
     case outbid
     case other
@@ -33,10 +40,10 @@ enum BidStatus {
 
 // MARK: - ViewModel (UNCHANGED)
 
-class AuctionViewModel: ObservableObject {
-    @Published var bids: [Bid] = []
+public class AuctionViewModel: ObservableObject {
+    @Published public var bids: [Bid] = []
 
-    init() {
+    public init() {
         bids = [
             Bid(id: "21", amount: 1650000, isUser: false),
             Bid(id: "22", amount: 1600000, isUser: false),
@@ -102,16 +109,17 @@ class AuctionViewModel: ObservableObject {
 
 // MARK: - MAIN VIEW
 
-struct AuctionView: View {
-    @StateObject var vm = AuctionViewModel()
+public struct AuctionView: View {
+    @StateObject public var vm: AuctionViewModel
 
-    var body: some View {
+    public init(vm: AuctionViewModel = AuctionViewModel()) {
+        _vm = StateObject(wrappedValue: vm)
+    }
+
+    public var body: some View {
         VStack(spacing: 20) {
             Spacer()
 
-            
-            
-                .font(.custom("Poppins-Regular", size: 32))
             PropertyCard(image: "villa1", lot: "Lot 1:", title: "Waves - Villa Waves - Villa", estimate: "$3.5M", status: "Status",estimatePercentage: "45% below estimate")
             
             
@@ -166,10 +174,15 @@ struct AuctionView: View {
 
 // MARK: - ROW
 
-struct BidRow: View {
+public struct BidRow: View {
 
-    let bid: Bid
-    let position: Int
+    public let bid: Bid
+    public let position: Int
+
+    public init(bid: Bid, position: Int) {
+        self.bid = bid
+        self.position = position
+    }
 
     var fontSize: CGFloat {
         switch position {
@@ -204,7 +217,7 @@ struct BidRow: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         HStack {
 
             // 🔥 LEFT CAPSULE (ONLY USER = "You")
@@ -253,8 +266,8 @@ struct BidRow: View {
 
 // MARK: - PREVIEW
 
-struct AuctionView_Previews: PreviewProvider {
-    static var previews: some View {
+public struct AuctionView_Previews: PreviewProvider {
+    public static var previews: some View {
         AuctionView()
     }
 }
