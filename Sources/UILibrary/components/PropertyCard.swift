@@ -41,7 +41,7 @@ public struct PropertyCard: View {
                 HStack{
                     Text(lot)
                         .font(.headline)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.Text.Primary)
                     
                     Text(title)
                         .font(.headline)

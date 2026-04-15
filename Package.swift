@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "UILibrary",
     platforms: [
-           .iOS(.v13)   // 👈 THIS is the minimum iOS version
+        .iOS(.v16)   // 👈 THIS is the minimum iOS version
        ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
