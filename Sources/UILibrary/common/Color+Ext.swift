@@ -11,7 +11,20 @@ import UIKit
 public extension Color {
     
     static let ColorsTextSecondary: Color = Color(red: 0.36, green: 0.46, blue: 0.5)
-    static let ColorsTextPrimary: Color = Color(red: 0.06, green: 0.06, blue: 0.06)
+    static let ColorsTextPrimary: Color = Color(red: 0.06, green: 0.06, blue: 0.06) 
+    //static let ColorsTextSecondary: Color = Color(red: 0.36, green: 0.46, blue: 0.5
+    static let ColorsStrokeDefault: Color = Color(red: 0.91, green: 0.91, blue: 0.91)
+    static let ColorsBackgroundSecondary: Color = Color(red: 0.96, green: 0.98, blue: 0.98)
+    static let ColorsTextBody: Color = Color(red: 0.36, green: 0.46, blue: 0.5)
+    static let ColorsButtonPrimary: Color = Color(red: 0.79, green: 0.06, blue: 0.72)
+    static let ColorsBackgroundError: Color = Color(red: 0.98, green: 0.17, blue: 0.21)
+
+
+
+    
+    static let ColorsAlertsBackgroundSuccess: Color = Color(red: 0.86, green: 0.99, blue: 0.9)
+        static let ColorsAlertForeground: Color = Color(red: 0.12, green: 0.46, blue: 0.21)
+
 
      struct Text {
         public static let Primary: Color = Color(red: 0.06, green: 0.06, blue: 0.06)

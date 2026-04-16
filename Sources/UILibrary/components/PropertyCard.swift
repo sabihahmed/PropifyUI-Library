@@ -13,7 +13,7 @@ public struct PropertyCard: View {
     public var estimate : String
     public var status : String
     public var estimatePercentage: String
-    
+    public var propertyType: String = "Villa"
     // Public initializer
     public init(image: String, lot: String, title: String, estimate: String, status: String, estimatePercentage: String) {
         self.image = image
@@ -32,53 +32,81 @@ public struct PropertyCard: View {
             Image(image)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 56, height: 56)
+                .frame(width: 56, height: 56, alignment: .topLeading)
                 .clipped()
                 .cornerRadius(10)
+            
+            
             
             VStack(alignment: .leading, spacing: 4){
                 
                 HStack{
                     Text(lot)
-                        .font(.headline)
+                        .font(.poppinsMedium(size: 14))
                         .foregroundColor(Color.Text.Primary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
                     
                     Text(title)
-                        .font(.headline)
+                        .font(.poppinsMedium(size: 14))
+                        .lineLimit(1)
+                    
+                    Text(propertyType) // 🆕 ADDED
+                        .font(.poppinsMedium(size: 14))
                         .lineLimit(1)
                 }
 
                 Text("Propify Estimate: \(estimate)")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .fontWeight(.semibold)
+                    .font(.poppinsMedium(size: 12))
+                    .kerning(0.3)
+                    .foregroundColor(.ColorsTextSecondary)
+
                 
                 HStack{
                     Text(status)
-                        .font(.caption)
-                        .padding(.horizontal,8)
-                        .padding(.vertical,4)
-                        .background(Color.green.opacity(0.2))
-                        .foregroundColor(.green)
-                        .cornerRadius(6)
+                        .font(.poppinsSemiBold(size: 12))
+                        .padding(.horizontal,10)
+                        .padding(.vertical,2)
+                        .frame(height: 20, alignment: .leading)
+                        .background(Color.ColorsAlertsBackgroundSuccess)
+                        .foregroundColor(.ColorsAlertForeground)
+                        .cornerRadius(16)
                     
                     Text(estimatePercentage)
+                        .font(.poppinsSemiBold(size: 12))
                         .font(.caption)
-                        .padding(.horizontal,8)
-                        .padding(.vertical,4)
-                        .background(Color.green.opacity(0.2))
-                        .foregroundColor(.green)
-                        .cornerRadius(6)
-                }
+                        .padding(.horizontal,10)
+                        .padding(.vertical,2)
+                        .frame(height: 20, alignment: .leading)
+                        .background(Color.ColorsAlertsBackgroundSuccess)
+                        .foregroundColor(.ColorsAlertForeground)
+                        .cornerRadius(16)
+                    
+                  
+
+                }.padding(.top,3)
             }
             Spacer()
+            
+            Image("infoSymbol" ,bundle: .module)
+                .resizable()           // Allows the vector to change size
+                .scaledToFit()         // Keeps the original aspect ratio
+                .frame(width: 18, height: 18)
+                .padding(.top,22) // 🟡 ADDED (better vertical alignment)
+                .padding(.horizontal,10)
+            // Set yourdesired size
             
         }
         .padding(12)
         .background(Color.white)
         .cornerRadius(16)
-        .shadow(radius: 1)
-    }
+        .shadow(color: Color(red: 0.06, green: 0.09, blue: 0.16).opacity(0.05), radius: 1, x: 1, y: 1)
+        .overlay(
+        RoundedRectangle(cornerRadius: 16)
+        .inset(by: 0.5)
+        .stroke(Color.ColorsStrokeDefault, lineWidth: 1)
+    )
+   }
 }
 
 public struct CustomTextBox: View {
@@ -106,6 +134,6 @@ public struct CustomTextBox: View {
 
 public struct PropertyCard_Previews: PreviewProvider {
     public static var previews: some View {
-        PropertyCard(image: "villa1", lot: "Lot 1:", title: "Waves - Villa Waves - Villa", estimate: "$3.5M", status: "Status",estimatePercentage: "45% below estimate")
+        PropertyCard(image: "", lot: "Lot 1:", title: "Waves - Villa Waves - Villa ", estimate: "$3.5M", status: "Status",estimatePercentage: "45% below estimate")
     }
 }

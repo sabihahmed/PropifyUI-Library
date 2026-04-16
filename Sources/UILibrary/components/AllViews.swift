@@ -26,7 +26,8 @@ public struct AuctionDetailsView: View {
         VStack(spacing: 0) {VStack(spacing: 6) {
             
             Text("Place a bid")
-                .fontWeight(.bold)
+                .foregroundColor(.ColorsTextPrimary)
+                .font(.poppinsBold(size: 20))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
 
@@ -87,33 +88,132 @@ public struct AuctionDetailsView: View {
                 
             }
             
-
-            // 🔥 FIXED BOTTOM BUTTON (no longer moves)
-            Button(action: {
-
-                // 🟢 API CALL
-                if autoBidEnabled {
-                    // enableAutoBidAPI()
-                } else {
-                    // placeBidAPI(userBid)
-                }
-
-            }) {
-                Text(autoBidEnabled
-                     ? "Enable Auto Bid"
-                     : "Place Bid $\(userBid)")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 54)
-                    .background(Color(red: 0.8, green: 0.1, blue: 0.7))
-                    .cornerRadius(27)
-                    .padding(.top, 20)
-                    .padding(.bottom, 10)
-            }
-            .padding(.horizontal)
-            .background(Color.white)
+            ConfirmBidButtonView()
+            
+            BidActionButtonView(
+                autoBidEnabled: $autoBidEnabled,
+                userBid: $userBid
+            )
+            EditBidButtonView()
+            
+            
         }
+    }
+} // 🟢 MainView ENDS HERE XXXXXXXXXXXX 🟢
+
+import SwiftUI
+
+public struct EditBidButtonView: View {
+
+    public init() {}
+
+    public var body: some View {
+
+        Button(action: {
+
+            // 🔴 TODO: Add confirm bid action here later
+            // e.g. confirmBidAPI()
+
+        }) {
+            Text("Edit Bid")
+                .font(.poppinsSemiBold(size: 16))
+                .foregroundColor(.ColorsTextPrimary)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .background(Color.white)
+                .cornerRadius(24)
+                .padding(.vertical,18)
+                .padding(.horizontal,32)
+                .overlay(
+                RoundedRectangle(cornerRadius: 24)
+                .stroke(Color.ColorsStrokeDefault, lineWidth: 1)
+                )
+        }
+        .padding(.horizontal)
+        .background(Color.white)
+    }
+}
+
+
+import SwiftUI
+
+public struct ConfirmBidButtonView: View {
+
+    public init() {}
+
+    public var body: some View {
+
+        Button(action: {
+
+            // 🔴 TODO: Add confirm bid action here later
+            // e.g. confirmBidAPI()
+
+        }) {
+            Text("Confirm Bid - $")
+                .font(.poppinsSemiBold(size: 16))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
+                .background(Color.ColorsBackgroundError)
+                .cornerRadius(24)
+                .padding(.top, 20)
+                .padding(.bottom, 10)
+        }
+        .padding(.horizontal)
+        .background(Color.white)
+    }
+}
+ 
+public struct BidActionButtonView: View {
+
+    @Binding public var autoBidEnabled: Bool
+    @Binding public var userBid: String
+
+    public init(
+        autoBidEnabled: Binding<Bool>,
+        userBid: Binding<String>
+    ) {
+        self._autoBidEnabled = autoBidEnabled
+        self._userBid = userBid
+    }
+
+    public var body: some View {
+
+        Button(action: {
+
+            // 🟢 LOCAL LOGIC ONLY (no API yet)
+
+            if autoBidEnabled {
+                enableAutoBidLocal()
+            } else {
+                placeBidLocal()
+            }
+
+        }) {
+            Text(autoBidEnabled
+                 ? "Enable Auto Bid"
+                 : "Place Bid $\(userBid)")
+                .font(.poppinsSemiBold(size: 16))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity,minHeight: 56, maxHeight: 56, alignment: .center)
+                .frame(height: 56)
+                .background(Color.ColorsButtonPrimary)
+                .cornerRadius(24)
+                .padding(.top, 20)
+                .padding(.bottom, 10)
+        }
+        .padding(.horizontal)
+        .background(Color.white)
+    }
+
+    // MARK: - Local Logic (temporary)
+
+    private func enableAutoBidLocal() {
+        print("🟢 Auto Bid Enabled (Local)")
+        autoBidEnabled = false // toggle simulation after enabling
+    }
+
+    private func placeBidLocal() {
+        print("🟣 Placing Bid Locally: \(userBid)")
     }
 }
 
@@ -135,28 +235,33 @@ public struct CurrentBidView: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Current bid")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.poppinsRegular(size: 14))
+                    .foregroundColor(Color.ColorsTextSecondary)
 
                 Text(currentBidAmount)
-                    .font(.headline)
+                    .font(.poppinsBold(size: 16))
                     .fontWeight(.bold)
+                    .foregroundColor(Color.ColorsTextPrimary)
+
             }
 
             Spacer()
 
             VStack(alignment: .trailing, spacing: 4) {
                 Text("Min increment")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.poppinsRegular(size: 14))
+                    .foregroundColor(Color.ColorsTextSecondary)
+                    
+
 
                 Text(minIncrementAmount)
-                    .font(.headline)
+                    .font(.poppinsBold(size: 16))
+                    .foregroundColor(Color.ColorsTextPrimary)
                     .fontWeight(.bold)
             }
         }
         .padding()
-        .background(Color(appHex: "#F5F9FB"))
+        .background(Color.ColorsBackgroundSecondary)
         .cornerRadius(16)
     }
 }
@@ -177,23 +282,25 @@ public struct YourBidView: View {
         VStack(alignment: .leading, spacing: 8) {
 
             Text("Your Bid")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+                .font(.poppinsMedium(size: 14))
+                .foregroundColor(.ColorsTextPrimary)
 
             HStack(spacing: 0) {
 
                 Text("$")
                     .frame(width: 50, height: 50)
-                    .background(Color(appHex: "#F5F9FB"))
+                    .background(Color.ColorsBackgroundSecondary)
 
                 TextField("1,750,000", text: $yourBidAmount)
+                    .font(.poppinsRegular(size: 14))
+                    .foregroundColor(.ColorsTextPrimary)
                     .padding(.leading, 12)
                     .keyboardType(.numberPad)
             }
             .frame(height: 50)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.gray.opacity(0.2))
+                    .stroke(Color.ColorsStrokeDefault)
             )
             .clipShape(RoundedRectangle(cornerRadius: 16))
         }
@@ -216,23 +323,25 @@ public struct YourMaxBidView: View {
         VStack(alignment: .leading, spacing: 8) {
 
             Text("Your Max Bid")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+                .font(.poppinsMedium(size: 14))
+                .foregroundColor(.ColorsTextPrimary)
 
             HStack(spacing: 0) {
 
                 Text("$")
                     .frame(width: 50, height: 50)
-                    .background(Color(appHex: "#F5F9FB"))
+                    .background(Color.ColorsBackgroundSecondary)
 
                 TextField("5,000,000", text: $maxAmount)
+                    .font(.poppinsRegular(size: 14))
+                    .foregroundColor(.ColorsTextPrimary)
                     .padding(.leading, 12)
                     .keyboardType(.numberPad)
             }
             .frame(height: 50)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.gray.opacity(0.2))
+                    .stroke(Color.ColorsStrokeDefault)
             )
             .clipShape(RoundedRectangle(cornerRadius: 16))
         }
@@ -247,8 +356,8 @@ public struct BidDisclaimerView: View {
     public init() {}
     public var body: some View {
         Text("We'll automatically bid on your behalf in increments of AED 50,000 up to your max.")
-            .font(.caption)
-            .foregroundColor(.secondary)
+            .font(.poppinsRegular(size: 12))
+            .foregroundColor(Color.ColorsTextBody)
     }
 }
 
@@ -289,10 +398,12 @@ public struct FinalPriceView: View {
             }) {
                 HStack {
                     Text("Final price calculation")
+                        .font(.poppinsMedium(size: 14))
+                        .foregroundColor(.ColorsTextPrimary)
 
                     Spacer()
 
-                    Image(systemName: "chevron.down")
+                    Image("arrowDown" ,bundle: .module)
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
                         .foregroundColor(.gray)
                 }
@@ -351,14 +462,14 @@ public struct PriceBreakdownView: View {
 
             HStack {
                 Text("Total")
-                    .font(.headline)
-                    .fontWeight(.bold)
+                    .font(.poppinsBold(size: 14))
+                    .foregroundColor(.ColorsTextPrimary)
 
                 Spacer()
 
                 Text("AED \(total)")
-                    .font(.headline)
-                    .fontWeight(.bold)
+                    .font(.poppinsBold(size: 14))
+                    .foregroundColor(.ColorsTextPrimary)
             }
         }
         .padding()
@@ -377,12 +488,15 @@ public struct BreakdownRow: View {
     public var body: some View {
         HStack {
             Text(label)
-                .foregroundColor(.gray)
+                .kerning(0.1)
+                .font(.poppinsRegular(size: 14))
+                .foregroundColor(.ColorsTextSecondary)
 
             Spacer()
 
-            Text("AED \(value)")
-                .fontWeight(.semibold)
+            Text("$ \(value)")
+                .font(.poppinsMedium(size: 14))
+                .foregroundColor(.ColorsTextPrimary)
         }
     }
 }
@@ -437,11 +551,15 @@ public struct AutoBidToggleView: View {
     public var body: some View {
         HStack {
             Text("Auto bid")
+                .font(.poppinsRegular(size: 14))
+                .foregroundColor(.ColorsTextPrimary)
+            
+            Toggle("", isOn: $isOn)
+                .labelsHidden()
+
 
             Spacer()
 
-            Toggle("", isOn: $isOn)
-                .labelsHidden()
         }
     }
 }
