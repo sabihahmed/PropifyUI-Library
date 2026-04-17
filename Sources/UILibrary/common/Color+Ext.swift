@@ -18,6 +18,14 @@ public extension Color {
     static let ColorsTextBody: Color = Color(red: 0.36, green: 0.46, blue: 0.5)
     static let ColorsButtonPrimary: Color = Color(red: 0.79, green: 0.06, blue: 0.72)
     static let ColorsBackgroundError: Color = Color(red: 0.98, green: 0.17, blue: 0.21)
+    static let ColorsAlertsBackgroundError: Color = Color(red: 1, green: 0.89, blue: 0.89)
+    static let ColorsTextWarning: Color = Color(red: 0.76, green: 0, blue: 0.03)
+    static let ColorsAlertsBackgroundErrorSubtle: Color = Color(red: 1, green: 0.95, blue: 0.95)
+    static let ColorsAlertsBackgroundInfo: Color = Color(red: 0.86, green: 0.92, blue: 1)
+    static let ColorsAlertsBackgroundWarning: Color = Color(red: 1, green: 0.95, blue: 0.78)
+
+
+
 
 
 

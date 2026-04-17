@@ -1,5 +1,70 @@
 import SwiftUI
 
+// MARK: - MAIN VIEW
+
+public struct AuctionView: View {
+    @StateObject public var vm: AuctionViewModel
+
+    public init(vm: AuctionViewModel = AuctionViewModel()) {
+        _vm = StateObject(wrappedValue: vm)
+    }
+
+    public var body: some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            PropertyCard(image: "villa1", lot: "Lot 1:", title: "Waves - Villa Waves - Villa", estimate: "$3.5M", status: "Status",estimatePercentage: "45% below estimate")
+            
+            
+
+            ZStack {
+
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(Color.white)
+
+                VStack(spacing: 12) {
+
+                    ForEach(Array(vm.bids.prefix(4).enumerated()), id: \.element.id) { index, bid in
+                        BidRow(bid: bid, position: index)
+                    }
+                }
+                .padding()
+            }
+            .frame(height: 280)
+            .clipped()
+
+            // 🔥 IMPROVED OVERLAY (MORE TRANSPARENT)
+            .overlay(
+                LinearGradient(
+                    colors: [
+                        Color.clear,
+                        Color.white.opacity(0.1),
+                        Color.white.opacity(0.3),
+                        Color.white.opacity(0.9)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            
+            LeadingAlert(state: .leading)
+            LeadingAlert(state: .outOfLead)
+            
+            AlertContainerView(state: .used)
+            AlertContainerView(state: .exceeded)
+
+                
+
+            PlaceBidAuctionHammerButton {
+                vm.placeUserBid()
+            }
+            
+
+        }
+    }
+}//🟢 MainView ENDS HERE XXXXXXXXXXXX
+
+
 // MARK: - Color Helper
 
 extension Color {
@@ -106,73 +171,185 @@ public class AuctionViewModel: ObservableObject {
         }
     }
 }
+// --------------------------------------------------------------------------
 
-// MARK: - MAIN VIEW
+// " MARK: Used 100% of your Limit Alerts, you've exceeded your limit alerts " 🚨🚨
+import SwiftUI
 
-public struct AuctionView: View {
-    @StateObject public var vm: AuctionViewModel
-
-    public init(vm: AuctionViewModel = AuctionViewModel()) {
-        _vm = StateObject(wrappedValue: vm)
-    }
-
-    public var body: some View {
-        VStack(spacing: 20) {
-            Spacer()
-
-            PropertyCard(image: "villa1", lot: "Lot 1:", title: "Waves - Villa Waves - Villa", estimate: "$3.5M", status: "Status",estimatePercentage: "45% below estimate")
-            
-            
-
-            ZStack {
-
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color.white)
-
-                VStack(spacing: 12) {
-
-                    ForEach(Array(vm.bids.prefix(4).enumerated()), id: \.element.id) { index, bid in
-                        BidRow(bid: bid, position: index)
-                    }
-                }
-                .padding()
-            }
-            .frame(height: 280)
-            .clipped()
-
-            // 🔥 IMPROVED OVERLAY (MORE TRANSPARENT)
-            .overlay(
-                LinearGradient(
-                    colors: [
-                        Color.clear,
-                        Color.white.opacity(0.1),
-                        Color.white.opacity(0.3),
-                        Color.white.opacity(0.9)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            CustomTextBox()
-                
-
-            Button(action: {
-                vm.placeUserBid()
-            }) {
-                Text("Place Bid")
-                    .font(.custom("Poppins-Bold", size: 18))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color(hex: "CA10B8"))
-                    .cornerRadius(90)
-                    .padding(.horizontal)
-            }
+public enum LimitState {
+    case used
+    case exceeded
+    
+    public var message: String {
+        switch self {
+        case .used:
+            return "You've used 100% of your\nlimit"
+        case .exceeded:
+            return "You've exceeded your\nlimit"
         }
     }
 }
 
-// MARK: - ROW
+public struct AlertContainerView: View {
+    public let state: LimitState
+    
+    // REQUIRED: Public structs need an explicit public init to be visible to other modules
+    public init(state: LimitState) {
+        self.state = state
+    }
+    
+    public var body: some View {
+        HStack(alignment: .center) {
+            Text(state.message)
+                .font(.poppinsMedium(size: 14))
+                    .foregroundColor(Color.ColorsTextWarning)
+                .multilineTextAlignment(.leading)
+            
+            Spacer()
+            
+            Button(action: {
+                print("Increase limit tapped")
+            }) {
+                Text("Increase limit")
+                    .font(.poppinsSemiBold(size: 12))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(Color.white)
+                    .clipShape(Capsule())
+                    .overlay(
+                        Capsule().stroke(Color.ColorsStrokeDefault)
+                    )
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .background(Color.ColorsAlertsBackgroundErrorSubtle)
+        .cornerRadius(16)
+    }
+}
+
+// --------------------------------------------------------------------------
+
+// Your'e Leading, Out of lead Custom Alert Boxes 🟢
+
+
+public enum LeadState {
+    case leading
+    case outOfLead
+}
+
+public struct LeadingAlert: View {
+    
+    let state: LeadState
+    
+    public init(state: LeadState) {
+        self.state = state
+    }
+    
+    public var body: some View {
+        HStack {
+            iconView
+            
+            Text(title)
+                .font(.poppinsSemiBold(size: 12))
+        }
+        .foregroundColor(foregroundColor)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 8)
+        .background(backgroundColor)
+        .cornerRadius(16)
+    }
+}
+
+private extension LeadingAlert {
+    
+    var title: String {
+        switch state {
+        case .leading:
+            return "You're Leading"
+        case .outOfLead:
+            return "Out of the Lead"
+        }
+    }
+    
+    var foregroundColor: Color {
+        switch state {
+        case .leading:
+            return .ColorsAlertForeground
+        case .outOfLead:
+            return .ColorsTextWarning
+        }
+    }
+    
+    var backgroundColor: Color {
+        switch state {
+        case .leading:
+            return .ColorsAlertsBackgroundSuccess
+        case .outOfLead:
+            return .ColorsAlertsBackgroundError
+        }
+    }
+    
+    @ViewBuilder
+    var iconView: some View {
+        switch state {
+        case .leading:
+            VStack(spacing: -4) {
+                Image("arrowUp", bundle: .module)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 8, height: 8)
+                
+                Image("arrowUp", bundle: .module)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 8, height: 8)
+            }
+            
+        case .outOfLead:
+            Image("arrowsDown", bundle: .module)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 15, height: 15)
+        }
+    }
+}
+
+
+// // MARK: AuctionHammer PLaceBID button View 🟢
+
+
+public struct PlaceBidAuctionHammerButton: View {
+    
+    private let action: () -> Void
+    
+    public init(action: @escaping () -> Void) {
+        self.action = action
+    }
+    
+    public var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Image("auctionHammer", bundle: .module)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 22, height: 22)
+
+                Text("Place Bid")
+                    .font(.poppinsBold(size: 22))
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color.ColorsButtonPrimary)
+            .cornerRadius(1000)
+            .padding(.horizontal)
+        }
+    }
+}
+
+// MARK: - BID ROW
 
 public struct BidRow: View {
 
