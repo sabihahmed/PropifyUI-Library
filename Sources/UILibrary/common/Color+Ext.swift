@@ -23,6 +23,12 @@ public extension Color {
     static let ColorsAlertsBackgroundErrorSubtle: Color = Color(red: 1, green: 0.95, blue: 0.95)
     static let ColorsAlertsBackgroundInfo: Color = Color(red: 0.86, green: 0.92, blue: 1)
     static let ColorsAlertsBackgroundWarning: Color = Color(red: 1, green: 0.95, blue: 0.78)
+    static let ColorsAlertsTextOnInfo: Color = Color(red: 0.08, green: 0.28, blue: 0.9)
+    static let ColorsButtonSecondary: Color = Color(red: 0.96, green: 0.98, blue: 0.98)
+    static let ColorsBackgroundInfo2: Color = Color(red: 0.94, green: 0.96, blue: 1)
+    static let ColorsGreenForeground: Color = Color(red: 0.12, green: 0.46, blue: 0.21)
+
+
 
 
 
