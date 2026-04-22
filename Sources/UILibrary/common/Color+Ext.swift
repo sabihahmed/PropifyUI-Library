@@ -27,6 +27,9 @@ public extension Color {
     static let ColorsButtonSecondary: Color = Color(red: 0.96, green: 0.98, blue: 0.98)
     static let ColorsBackgroundInfo2: Color = Color(red: 0.94, green: 0.96, blue: 1)
     static let ColorsGreenForeground: Color = Color(red: 0.12, green: 0.46, blue: 0.21)
+    static let ColorsBackgroundLightPurple: Color = Color(red: 1, green: 0.9, blue: 1)
+    static let ColorsTextPurple01: Color = Color(red: 0.79, green: 0.06, blue: 0.72)
+
 
 
 

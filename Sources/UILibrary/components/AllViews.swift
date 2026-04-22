@@ -4,12 +4,10 @@ import SwiftUI
 
 public struct AuctionDetailsView: View {
 
-    @State private var userBid: String = "1800000"
     @State private var userMaxBid: String = "5000000"
     @State private var minIncrementAmounts: String = "60,000"
     @State private var autoBidEnabled: Bool = true
     @StateObject private var vm = PlaceBidViewModel()
-    @State private var selectedQuickBid: String? = nil
     // 🟢 DROPDOWN CONTROL
     @State private var isPriceExpanded: Bool = false
     
@@ -19,27 +17,7 @@ public struct AuctionDetailsView: View {
     @State private var platformFees: String = "515"
     @State private var taxes: String = "53"
     @State private var totalAmount: String = "1,755,406"
-    private func applyQuickBid(amount: String) {
-        
-        // Convert "50K" → 50000 safely
-        let numericPart = amount.replacingOccurrences(of: "K", with: "")
-        
-        guard let increment = Int(numericPart) else { return }
-        
-        let currentClean = userBid.replacingOccurrences(of: ",", with: "")
-        
-        guard let current = Int(currentClean) else { return }
-        
-        let newValue = current + (increment * 1000)
-        
-        // Format nicely
-        userBid = formatNumber(newValue)
-    }
-    private func formatNumber(_ value: Int) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
-    }
+
 
     public init() {}
 
@@ -75,13 +53,12 @@ public struct AuctionDetailsView: View {
 
                     if !isPriceExpanded {
                         CurrentBidView(
-                            currentBidAmount: $userBid,
+                            currentBidAmount: $vm.userBid,
                             minIncrementAmount: $minIncrementAmounts
                         )
                     }
 
-                    YourBidView(yourBidAmount: $userBid)
-
+                    YourBidView(yourBidAmount: $vm.userBid)
                     QuickBidButtonsView(
                         amounts: ["50K", "100K", "200K"],
                         selectedAmount: vm.selectedQuickBid,
@@ -104,7 +81,7 @@ public struct AuctionDetailsView: View {
 
                     FinalPriceView(
                         isExpanded: $isPriceExpanded,
-                        currentBid: $userBid,
+                        currentBid: $vm.userBid,
                         premium: $buyerPremium,
                         commission: $sellerCommission,
                         fees: $platformFees,
@@ -121,7 +98,7 @@ public struct AuctionDetailsView: View {
             
             BidActionButtonView(
                 autoBidEnabled: $autoBidEnabled,
-                userBid: $userBid
+                userBid: $vm.userBid
             )
             EditBidButtonView()
             
@@ -606,21 +583,21 @@ struct QuickBidButton: View {
         if isDisabled {
             return Color.gray.opacity(0.8)   // dark gray text
         }
-        return isSelected ? .pink : .black
+        return isSelected ? .ColorsTextPurple01 : .black
     }
     
     private var backgroundColor: Color {
         if isDisabled {
             return Color.gray.opacity(0.15)   // gray background
         }
-        return isSelected ? Color.pink.opacity(0.1) : .white
+        return isSelected ? Color.ColorsBackgroundLightPurple : .white
     }
     
     private var border: some View {
         RoundedRectangle(cornerRadius: 20)
             .stroke(
                 isDisabled ? Color.gray.opacity(0.3) :
-                (isSelected ? Color.pink : Color.gray.opacity(0.2)),
+                (isSelected ? Color.ColorsTextPurple01 : Color.gray.opacity(0.2)),
                 lineWidth: 2
             )
     }
