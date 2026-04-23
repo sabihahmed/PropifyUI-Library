@@ -13,8 +13,14 @@ public struct AuctionView: View {
         VStack(spacing: 20) {
             Spacer()
 
-            PropertyCard(image: "villa1", lot: "Lot 1:", title: "Waves - Villa Waves - Villa", estimate: "$3.5M", status: "Status",estimatePercentage: "45% below estimate")
-            
+            PropertyCard(
+                       image: "",
+                       lot: "Lot 1:",
+                       title: "Waves - Villa Waves - Villa",
+                       estimate: "$3.5M",
+                       status: .active, // ✅ FIXED
+                       estimatePercentage: "45% below estimate"
+                   )
             
 
             ZStack {

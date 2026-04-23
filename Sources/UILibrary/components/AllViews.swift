@@ -4,11 +4,10 @@ import SwiftUI
 
 public struct AuctionDetailsView: View {
 
-    @State private var userBid: String = "1800000"
     @State private var userMaxBid: String = "5000000"
     @State private var minIncrementAmounts: String = "60,000"
     @State private var autoBidEnabled: Bool = true
-
+    @StateObject private var vm = PlaceBidViewModel()
     // 🟢 DROPDOWN CONTROL
     @State private var isPriceExpanded: Bool = false
     
@@ -18,6 +17,7 @@ public struct AuctionDetailsView: View {
     @State private var platformFees: String = "515"
     @State private var taxes: String = "53"
     @State private var totalAmount: String = "1,755,406"
+
 
     public init() {}
 
@@ -41,29 +41,35 @@ public struct AuctionDetailsView: View {
                 VStack(spacing: 20) {
 
                     if !isPriceExpanded {
-                        PropertyCard(image: "villa1", lot: "Lot 1:", title: "Waves - Villa Waves - Villa", estimate: "$3.5M", status: "Status",estimatePercentage: "45% below estimate")
-
+                        PropertyCard(
+                                   image: "",
+                                   lot: "Lot 1:",
+                                   title: "Waves - Villa Waves - Villa",
+                                   estimate: "$3.5M",
+                                   status: .active, // ✅ FIXED
+                                   estimatePercentage: "45% below estimate"
+                               )
                     }
 
                     if !isPriceExpanded {
                         CurrentBidView(
-                            currentBidAmount: $userBid,
+                            currentBidAmount: $vm.userBid,
                             minIncrementAmount: $minIncrementAmounts
                         )
                     }
 
-                    YourBidView(yourBidAmount: $userBid)
-
-                    QuickBidButtonsView { incrementAmount in
+                    YourBidView(yourBidAmount: $vm.userBid)
+                    QuickBidButtonsView(
+                        amounts: ["50K", "100K", "200K"],
+                        selectedAmount: vm.selectedQuickBid,
+                        isAutoBidEnabled: autoBidEnabled
+                    ) { amount in
                         
-                        // 🟢 LOCAL LOGIC
-                        if let current = Int(userBid.replacingOccurrences(of: ",", with: "")) {
-                            let newValue = current + incrementAmount
-                            userBid = "\(newValue)"
-                            
-                            // 🟢 API CALL
-                            // pushBidToServer(newValue)
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            vm.selectedQuickBid = amount
                         }
+                        
+                        vm.applyQuickBid(amount: amount)
                     }
 
                     AutoBidToggleView(isOn: $autoBidEnabled)
@@ -75,7 +81,7 @@ public struct AuctionDetailsView: View {
 
                     FinalPriceView(
                         isExpanded: $isPriceExpanded,
-                        currentBid: $userBid,
+                        currentBid: $vm.userBid,
                         premium: $buyerPremium,
                         commission: $sellerCommission,
                         fees: $platformFees,
@@ -92,7 +98,7 @@ public struct AuctionDetailsView: View {
             
             BidActionButtonView(
                 autoBidEnabled: $autoBidEnabled,
-                userBid: $userBid
+                userBid: $vm.userBid
             )
             EditBidButtonView()
             
@@ -504,35 +510,137 @@ public struct BreakdownRow: View {
 //////////////////////////////////////////////////////////////////
 // MARK: - QUICK BUTTONS
 //////////////////////////////////////////////////////////////////
+///
+///
 
-public struct QuickBidButtonsView: View {
+import Foundation
+import SwiftUI
 
-    public var onTap: (Int) -> Void
-    public init(onTap: @escaping (Int) -> Void) {
-        self.onTap = onTap
+final class PlaceBidViewModel: ObservableObject {
+    
+    @Published var userBid: String = "1800000"
+    @Published var selectedQuickBid: String? = nil
+    
+    // MARK: - Quick Bid Logic
+    
+    func applyQuickBid(amount: String) {
+        
+        let numericPart = amount.replacingOccurrences(of: "K", with: "")
+        
+        guard let increment = Int(numericPart) else { return }
+        
+        let currentClean = userBid.replacingOccurrences(of: ",", with: "")
+        
+        guard let current = Int(currentClean) else { return }
+        
+        let newValue = current + (increment * 1000)
+        
+        userBid = formatNumber(newValue)
     }
+    
+    // MARK: - Formatter
+    
+    private func formatNumber(_ value: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
+    }
+}
 
-    let increments = [
-        ("50K", 50000),
-        ("100K", 100000),
-        ("200K", 200000)
-    ]
+import SwiftUI
 
+/// Single quick bid pill button.
+/// Handles visual states only (selected / disabled).
+struct QuickBidButton: View {
+    
+    let title: String
+    let isSelected: Bool
+    let isDisabled: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        
+        Text("+ \(title)")
+            .font(.system(size: 18, weight: .bold))
+            .foregroundColor(foregroundColor)
+            .padding(.vertical, 20)
+            .padding(.horizontal, 25)
+            .background(backgroundColor)
+            .overlay(border)
+            .cornerRadius(20)
+            .shadow(color: Color.black.opacity(isSelected ? 0 : 0.05),
+                    radius: 5, x: 0, y: 2)
+            .opacity(isDisabled ? 0.7 : 1)
+            .onTapGesture {
+                guard !isDisabled else { return }
+                action()
+            }
+    }
+    
+    // MARK: - COLORS (UPDATED)
+    
+    private var foregroundColor: Color {
+        if isDisabled {
+            return Color.gray.opacity(0.8)   // dark gray text
+        }
+        return isSelected ? .ColorsTextPurple01 : .black
+    }
+    
+    private var backgroundColor: Color {
+        if isDisabled {
+            return Color.gray.opacity(0.15)   // gray background
+        }
+        return isSelected ? Color.ColorsBackgroundLightPurple : .white
+    }
+    
+    private var border: some View {
+        RoundedRectangle(cornerRadius: 20)
+            .stroke(
+                isDisabled ? Color.gray.opacity(0.3) :
+                (isSelected ? Color.ColorsTextPurple01 : Color.gray.opacity(0.2)),
+                lineWidth: 2
+            )
+    }
+}
+import SwiftUI
+
+/// Horizontal scroll row for quick bid selection.
+/// Does NOT contain business logic — only forwards selection.
+public struct QuickBidButtonsView: View {
+    
+    let amounts: [String]
+    let selectedAmount: String?
+    let isAutoBidEnabled: Bool
+    let onSelect: (String) -> Void
+    
+    public init(
+        amounts: [String],
+        selectedAmount: String?,
+        isAutoBidEnabled: Bool,
+        onSelect: @escaping (String) -> Void
+    ) {
+        self.amounts = amounts
+        self.selectedAmount = selectedAmount
+        self.isAutoBidEnabled = isAutoBidEnabled
+        self.onSelect = onSelect
+    }
+    
     public var body: some View {
-        HStack(spacing: 10) {
-            ForEach(increments, id: \.0) { label, value in
-                Button {
-                    onTap(value)
-                } label: {
-                    Text("+$ \(label)")
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 44)
-                        .foregroundColor(.gray)
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(10)
+        
+        HStack(spacing: 15) {
+            
+            ForEach(amounts, id: \.self) { amount in
+                
+                QuickBidButton(
+                    title: amount,
+                    isSelected: selectedAmount == amount,
+                    isDisabled: isAutoBidEnabled
+                ) {
+                    onSelect(amount)
                 }
             }
         }
+        .padding(.horizontal)
     }
 }
 
