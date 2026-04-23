@@ -43,7 +43,6 @@ struct MainView: View {
     }
 }
 
-import SwiftUI
 
 public struct BroadcastRowView: View {
     public let message: String
