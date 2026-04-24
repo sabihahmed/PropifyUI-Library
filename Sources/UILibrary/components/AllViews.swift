@@ -5,7 +5,7 @@ import SwiftUI
 public struct AuctionDetailsView: View {
 
     @State private var userMaxBid: String = "5000000"
-    @State private var minIncrementAmounts: String = "60,000"
+    @State private var minIncrementAmounts: Double = 60000.0
     @State private var autoBidEnabled: Bool = true
     @StateObject private var vm = PlaceBidViewModel()
     // 🟢 DROPDOWN CONTROL
@@ -172,11 +172,11 @@ public struct ConfirmBidButtonView: View {
 public struct BidActionButtonView: View {
 
     @Binding public var autoBidEnabled: Bool
-    @Binding public var userBid: String
+    @Binding public var userBid: Double
 
     public init(
         autoBidEnabled: Binding<Bool>,
-        userBid: Binding<String>
+        userBid: Binding<Double>
     ) {
         self._autoBidEnabled = autoBidEnabled
         self._userBid = userBid
@@ -229,10 +229,10 @@ public struct BidActionButtonView: View {
 
 public struct CurrentBidView: View {
 
-    @Binding public var currentBidAmount: String
-    @Binding public var minIncrementAmount: String
+    @Binding public var currentBidAmount: Double
+    @Binding public var minIncrementAmount: Double
 
-    public init(currentBidAmount: Binding<String>, minIncrementAmount: Binding<String>) {
+    public init(currentBidAmount: Binding<Double>, minIncrementAmount: Binding<Double>) {
         self._currentBidAmount = currentBidAmount
         self._minIncrementAmount = minIncrementAmount
     }
@@ -244,7 +244,7 @@ public struct CurrentBidView: View {
                     .font(.poppinsRegular(size: 14))
                     .foregroundColor(Color.ColorsTextSecondary)
 
-                Text(currentBidAmount)
+                Text("\(currentBidAmount)")
                     .font(.poppinsBold(size: 16))
                     .fontWeight(.bold)
                     .foregroundColor(Color.ColorsTextPrimary)
@@ -260,7 +260,7 @@ public struct CurrentBidView: View {
                     
 
 
-                Text(minIncrementAmount)
+                Text("\(minIncrementAmount)")
                     .font(.poppinsBold(size: 16))
                     .foregroundColor(Color.ColorsTextPrimary)
                     .fontWeight(.bold)
@@ -278,10 +278,12 @@ public struct CurrentBidView: View {
 
 public struct YourBidView: View {
 
-    @Binding public var yourBidAmount: String
-
-    public init(yourBidAmount: Binding<String>) {
+    @Binding public var yourBidAmount: Double
+    @State private var bidText : String = ""
+    
+    public init(yourBidAmount: Binding<Double>) {
         self._yourBidAmount = yourBidAmount
+        _bidText = State(initialValue: String(yourBidAmount.wrappedValue))
     }
 
     public var body: some View {
@@ -296,12 +298,20 @@ public struct YourBidView: View {
                 Text("$")
                     .frame(width: 50, height: 50)
                     .background(Color.ColorsBackgroundSecondary)
-
-                TextField("1,750,000", text: $yourBidAmount)
+                
+                
+                TextEditor(text: $bidText)
                     .font(.poppinsRegular(size: 14))
                     .foregroundColor(.ColorsTextPrimary)
                     .padding(.leading, 12)
                     .keyboardType(.numberPad)
+                    
+                
+//                TextField(text: $bidText)
+//                    .font(.poppinsRegular(size: 14))
+//                    .foregroundColor(.ColorsTextPrimary)
+//                    .padding(.leading, 12)
+//                    .keyboardType(.numberPad)
             }
             .frame(height: 50)
             .overlay(
@@ -375,14 +385,14 @@ public struct FinalPriceView: View {
 
     @Binding public var isExpanded: Bool
 
-    @Binding public var currentBid: String
+    @Binding public var currentBid: Double
     @Binding public var premium: String
     @Binding public var commission: String
     @Binding public var fees: String
     @Binding public var tax: String
     @Binding public var total: String
 
-    public init(isExpanded: Binding<Bool>, currentBid: Binding<String>, premium: Binding<String>, commission: Binding<String>, fees: Binding<String>, tax: Binding<String>, total: Binding<String>) {
+    public init(isExpanded: Binding<Bool>, currentBid: Binding<Double>, premium: Binding<String>, commission: Binding<String>, fees: Binding<String>, tax: Binding<String>, total: Binding<String>) {
         self._isExpanded = isExpanded
         self._currentBid = currentBid
         self._premium = premium
@@ -440,13 +450,13 @@ public struct FinalPriceView: View {
 //////////////////////////////////////////////////////////////////
 
 public struct PriceBreakdownView: View {
-    public var bid: String
+    public var bid: Double
     public var premium: String
     public var commission: String
     public var fees: String
     public var tax: String
     public var total: String
-    public init(bid: String, premium: String, commission: String, fees: String, tax: String, total: String) {
+    public init(bid: Double, premium: String, commission: String, fees: String, tax: String, total: String) {
         self.bid = bid
         self.premium = premium
         self.commission = commission
@@ -458,7 +468,7 @@ public struct PriceBreakdownView: View {
     public var body: some View {
         VStack(spacing: 15) {
 
-            BreakdownRow(label: "Final price calculation", value: bid)
+            BreakdownRow(label: "Final price calculation", value: "\(bid)")
             BreakdownRow(label: "Buyer's premium", value: premium)
             BreakdownRow(label: "Seller commission", value: commission)
             BreakdownRow(label: "Platform fees", value: fees)
@@ -518,7 +528,7 @@ import SwiftUI
 
 final class PlaceBidViewModel: ObservableObject {
     
-    @Published var userBid: String = "1800000"
+    @Published var userBid: Double = 180000.0
     @Published var selectedQuickBid: String? = nil
     
     // MARK: - Quick Bid Logic
@@ -529,13 +539,13 @@ final class PlaceBidViewModel: ObservableObject {
         
         guard let increment = Int(numericPart) else { return }
         
-        let currentClean = userBid.replacingOccurrences(of: ",", with: "")
+        let currentClean = "\(userBid)".replacingOccurrences(of: ",", with: "")
         
         guard let current = Int(currentClean) else { return }
         
         let newValue = current + (increment * 1000)
         
-        userBid = formatNumber(newValue)
+        userBid = Double(formatNumber(newValue)) ?? 0.0
     }
     
     // MARK: - Formatter
