@@ -11,7 +11,7 @@ import UIKit
 public extension Color {
     
     static let ColorsTextSecondary: Color = Color(red: 0.36, green: 0.46, blue: 0.5)
-    static let ColorsTextPrimary: Color = Color(red: 0.06, green: 0.06, blue: 0.06) 
+    static let ColorsTextPrimary: Color = Color(red: 0.06, green: 0.06, blue: 0.06)
     //static let ColorsTextSecondary: Color = Color(red: 0.36, green: 0.46, blue: 0.5
     static let ColorsStrokeDefault: Color = Color(red: 0.91, green: 0.91, blue: 0.91)
     static let ColorsBackgroundSecondary: Color = Color(red: 0.96, green: 0.98, blue: 0.98)
@@ -30,17 +30,17 @@ public extension Color {
     static let ColorsBackgroundLightPurple: Color = Color(red: 1, green: 0.9, blue: 1)
     static let ColorsTextPurple01: Color = Color(red: 0.79, green: 0.06, blue: 0.72)
 
-
-
-
-
-
-
-
-
     
-    static let ColorsAlertsBackgroundSuccess: Color = Color(red: 0.86, green: 0.99, blue: 0.9)
-        static let ColorsAlertForeground: Color = Color(red: 0.12, green: 0.46, blue: 0.21)
+    
+
+    static let ColorsAlertForeground: Color = Color(red: 0.12, green: 0.46, blue: 0.21)
+    
+    // ──────────────────────────────────────────────
+    // MARK: - Bid highlight logic — Alert Text Colors
+    // ──────────────────────────────────────────────
+    static let ColorsAlertsTextOnSuccess: Color = Color(red: 0, green: 0.51, blue: 0.21)       // #008236
+    static let ColorsAlertsTextOnWarning: Color = Color(red: 0.73, green: 0.30, blue: 0)       // #BB4D00
+    static let ColorsAlertsBackgroundSuccess: Color = Color(red: 0.86, green: 0.99, blue: 0.9) // #DCFCE7
 
 
      struct Text {

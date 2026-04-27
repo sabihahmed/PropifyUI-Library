@@ -103,10 +103,15 @@ public struct Bid: Identifiable {
     }
 }
 
+// ──────────────────────────────────────────────
+// MARK: - Bid highlight logic
+// 4 conditions for bid row coloring
+// ──────────────────────────────────────────────
 public enum BidStatus {
-    case leading
-    case outbid
-    case other
+    case leading    // Our bid is on top (index 0)
+    case dropped    // Our bid exists but has dropped below top
+    case outbid     // Other user's bid is on top, ours has dropped
+    case other      // Our bid doesn't exist in top 6 / default
 }
 
 // MARK: - ViewModel (UNCHANGED)
@@ -376,27 +381,25 @@ public struct BidRow: View {
         }
     }
 
+    // ──────────────────────────────────────────────
+    // MARK: - Bid highlight logic — colors for 4 conditions
+    // ──────────────────────────────────────────────
+
     var amountColor: Color {
-        if bid.isUser {
-            return bid.status == .leading
-            ? Color(hex: "008236")
-            : .gray
-        } else {
-            return position == 0
-            ? Color(hex: "BB4D00")
-            : .gray
+        switch bid.status {
+        case .leading:  return Color.ColorsAlertsTextOnSuccess
+        case .dropped:  return Color.ColorsTextSecondary
+        case .outbid:   return Color.ColorsAlertsTextOnWarning
+        case .other:    return Color.ColorsTextSecondary
         }
     }
 
     var rowBackground: Color {
-        if bid.isUser {
-            return bid.status == .leading
-            ? Color(hex: "DCFCE7")
-            : Color.gray.opacity(0.15)
-        } else {
-            return position == 0
-            ? Color(hex: "FEF3C6")
-            : Color.clear
+        switch bid.status {
+        case .leading:  return Color.ColorsAlertsBackgroundSuccess
+        case .dropped:  return Color.ColorsButtonSecondary
+        case .outbid:   return Color.ColorsAlertsBackgroundWarning
+        case .other:    return Color.white
         }
     }
 
@@ -409,13 +412,13 @@ public struct BidRow: View {
                     .font(.custom("Poppins-Regular", size: 14))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color(hex: "FFE6FE"))
+                    .background(Color.ColorsBackgroundLightPurple)
                     .overlay(
-                        Capsule().stroke(Color(hex: "CA10B8"), lineWidth: 1)
+                        Capsule().stroke(Color.ColorsButtonPrimary, lineWidth: 1)
                     )
-                    .foregroundColor(Color(hex: "CA10B8"))
+                    .foregroundColor(Color.ColorsButtonPrimary)
             } else {
-                Text("#\(bid.id)")
+                Text("# \(position + 1)")
                     .font(.custom("Poppins-Regular", size: 14))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
