@@ -349,7 +349,7 @@ public struct PlaceBidAuctionHammerButton: View {
             .frame(maxWidth: .infinity)
             .padding()
             .background(Color.ColorsButtonPrimary)
-            .cornerRadius(1000)
+            .cornerRadius(96)
             .padding(.horizontal)
         }
     }

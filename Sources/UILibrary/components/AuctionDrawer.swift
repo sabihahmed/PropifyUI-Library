@@ -22,7 +22,7 @@ public struct DrawerView: View {
     
     public init(
         isOpen: Binding<Bool>,
-        width: CGFloat = 350,
+        width: CGFloat = 320,
         items: [DrawerItem]
     ) {
         self._isOpen = isOpen
@@ -117,8 +117,14 @@ public struct DrawerMenuItem: View {
 struct ContentView: View {
     
     @State private var isDrawerOpen: Bool
-    
     private let isPreview: Bool
+    
+    // Define the items you want to show in the drawer
+    private let drawerItems = [
+        DrawerItem(icon: "house", title: "Villa"),
+        DrawerItem(icon: "building", title: "Apartment"),
+        DrawerItem(icon: "leaf", title: "Farmhouse")
+    ]
     
     init(isDrawerOpen: Bool = false, isPreview: Bool = false) {
         self._isDrawerOpen = State(initialValue: isDrawerOpen)
@@ -128,6 +134,7 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .leading) {
             
+            // 1. Your Main Navigation Content
             NavigationView {
                 VStack {
                     Text("Main App Content")
@@ -137,8 +144,6 @@ struct ContentView: View {
                 .navigationTitle("Home")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        
-                        // Hide button in preview if you want (optional)
                         if !isPreview {
                             Button {
                                 withAnimation(.spring()) {
@@ -152,17 +157,16 @@ struct ContentView: View {
                 }
             }
             
+            // 2. ADD THE DRAWER HERE (It sits on top of the NavigationView)
             DrawerView(
                 isOpen: $isDrawerOpen,
-                items: [
-                    DrawerItem(icon: "gear", title: "Settings"),
-                    DrawerItem(icon: "bell", title: "Notifications"),
-                    DrawerItem(icon: "questionmark.circle", title: "Help")
-                ]
+                width: 320,
+                items: drawerItems
             )
         }
     }
 }
+
 import SwiftUI
 
 
@@ -290,15 +294,8 @@ public struct CatalogueDropdownView: View {
 }
 
 // MARK: - PREVIEW
-struct DrawerView_Previews: PreviewProvider {
+struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        DrawerView(
-            isOpen: .constant(true),
-            items: [
-                DrawerItem(icon: "house", title: "Villa"),
-                DrawerItem(icon: "building", title: "Apartment"),
-                DrawerItem(icon: "leaf", title: "Farmhouse")
-            ]
-        )
+        ContentView(isDrawerOpen: true) // Set to true to see it immediately
     }
 }
