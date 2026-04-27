@@ -1,17 +1,35 @@
 import SwiftUI
 import Combine
 
-class WarningTimerViewModel: ObservableObject {
+public class WarningTimerViewModel: ObservableObject {
     
-    @Published var timeRemaining: Int = 10
+    @Published public var timeRemaining: Int
+    @Published public var isVisible: Bool = false
     
+    private var totalDuration: Int
     private var timer: AnyCancellable?
     
-    init() {
+    public init(duration: Int = 10) {
+        self.totalDuration = duration
+        self.timeRemaining = duration
+    }
+    
+    public func startWarning(duration: Int) {
+        self.totalDuration = duration
+        self.timeRemaining = duration
+        self.isVisible = true
         startTimer()
     }
     
+    public func resetWarning() {
+        self.isVisible = false
+        self.timer?.cancel()
+        self.timer = nil
+        self.timeRemaining = totalDuration
+    }
+    
     func startTimer() {
+        timer?.cancel()
         timer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
@@ -23,17 +41,18 @@ class WarningTimerViewModel: ObservableObject {
         if timeRemaining > 0 {
             timeRemaining -= 1
         } else {
-            timeRemaining = 10 // loop
+            timer?.cancel()
+            timer = nil
         }
     }
     
     // MARK: - STATES
     
-    var isLastCall: Bool {
+    public var isLastCall: Bool {
         timeRemaining <= 3
     }
     
-    var message: String {
+    public var message: String {
         switch timeRemaining {
         case 7...10:
             return "Fair warning: Going Once"
@@ -47,8 +66,8 @@ class WarningTimerViewModel: ObservableObject {
     }
     
     // ✅ ONE continuous progress (NO RESET)
-    var progress: Double {
-        return Double(timeRemaining) / 10.0
+    public var progress: Double {
+        return Double(timeRemaining) / Double(totalDuration)
     }
 }
 
@@ -80,14 +99,21 @@ struct CircularTimerView: View {
         .frame(width: 24, height: 24)
     }
 }
-struct WarningBadgeView: View {
+public struct WarningBadgeView: View {
     
-    var count: Int
-    var message: String
-    var isLastCall: Bool
-    var progress: Double
+    public var count: Int
+    public var message: String
+    public var isLastCall: Bool
+    public var progress: Double
     
-    var body: some View {
+    public init(count: Int, message: String, isLastCall: Bool, progress: Double) {
+        self.count = count
+        self.message = message
+        self.isLastCall = isLastCall
+        self.progress = progress
+    }
+    
+    public var body: some View {
         
         let strokeColor = isLastCall ? Color.warningRed : Color.warningPink
         let textColor = strokeColor
@@ -121,26 +147,34 @@ struct WarningBadgeView: View {
     }
 }
 
-struct WarningContainerView: View {
+public struct WarningContainerView: View {
     
-    @StateObject private var vm = WarningTimerViewModel()
+    @ObservedObject private var vm: WarningTimerViewModel
     
-    var body: some View {
-        VStack(spacing: 16) {
-            
-            WarningBadgeView(
-                count: vm.timeRemaining,
-                message: vm.message,
-                isLastCall: vm.isLastCall,
-                progress: vm.progress
-            )
-            
-            if vm.timeRemaining == 0 {
-                Text("🔔 Next Alert Placeholder")
-                    .font(.caption)
+    public init(vm: WarningTimerViewModel) {
+        self._vm = ObservedObject(wrappedValue: vm)
+    }
+    
+    public var body: some View {
+        if vm.isVisible {
+            VStack(spacing: 16) {
+                
+                WarningBadgeView(
+                    count: vm.timeRemaining,
+                    message: vm.message,
+                    isLastCall: vm.isLastCall,
+                    progress: vm.progress
+                )
+                
+                if vm.timeRemaining == 0 {
+                    Text("🔔 Next Alert Placeholder")
+                        .font(.caption)
+                }
             }
+            .padding()
+            .transition(.opacity)
+            .animation(.easeInOut, value: vm.isVisible)
         }
-        .padding()
     }
 }
 import SwiftUI
@@ -173,7 +207,7 @@ extension Color {
 
 struct WarningContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        WarningContainerView()
+        WarningContainerView(vm: WarningTimerViewModel(duration: 10))
     }
 }
 
