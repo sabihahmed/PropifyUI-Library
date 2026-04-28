@@ -107,7 +107,7 @@ public struct BroadcastRowView: View {
     }
     
     public var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .center, spacing: 12) {
             
             ZStack {
                 Circle()
@@ -122,13 +122,13 @@ public struct BroadcastRowView: View {
             Text(message)
                 .font(.poppinsMedium(size: 14))
                 .foregroundColor(.ColorsTextPrimary)
-                .lineSpacing(4)
+                .lineSpacing(0)
                 .multilineTextAlignment(.leading)
             
             Spacer()
             
             Text(formatRelativeTime(from: timestamp))
-                .padding(.top)
+//                .padding()
                 .font(.poppinsRegular(size: 12))
                 .foregroundColor(.secondary)
         }

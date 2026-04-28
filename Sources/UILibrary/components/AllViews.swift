@@ -569,47 +569,53 @@ struct QuickBidButton: View {
     let action: () -> Void
     
     var body: some View {
-        
-        Text("+ \(title)")
-            .font(.system(size: 18, weight: .bold))
-            .foregroundColor(foregroundColor)
-            .padding(.vertical, 20)
-            .padding(.horizontal, 25)
-            .background(backgroundColor)
-            .overlay(border)
-            .cornerRadius(20)
-            .shadow(color: Color.black.opacity(isSelected ? 0 : 0.05),
-                    radius: 5, x: 0, y: 2)
-            .opacity(isDisabled ? 0.7 : 1)
-            .onTapGesture {
-                guard !isDisabled else { return }
-                action()
-            }
+        HStack(alignment: .center, spacing: 6) {
+            Text("+ \(title)")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(foregroundColor)
+                .kerning(0.1)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .center)
+//
+        .background(backgroundColor)
+        .cornerRadius(16)
+        .shadow(
+            color: Color(red: 0.06, green: 0.09, blue: 0.16).opacity(isSelected ? 0 : 0.06),
+            radius: 1, x: 0, y: 1
+        )
+        .shadow(
+            color: Color(red: 0.06, green: 0.09, blue: 0.16).opacity(isSelected ? 0 : 0.1),
+            radius: 1.5, x: 0, y: 1
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .inset(by: 0.5)
+                
+                .stroke(isSelected ? Color.ColorsTextPurple01 : Color.ColorsStrokeDefault, lineWidth: 1)
+        )
+        .opacity(isDisabled ? 0.7 : 1)
+        .onTapGesture {
+            guard !isDisabled else { return }
+            action()
+        }
     }
     
-    // MARK: - COLORS (UPDATED)
+    // MARK: - COLORS
     
     private var foregroundColor: Color {
         if isDisabled {
-            return Color.gray.opacity(0.8)   // dark gray text
+            return Color.gray.opacity(0.8)
         }
         return isSelected ? .ColorsTextPurple01 : .black
     }
     
     private var backgroundColor: Color {
         if isDisabled {
-            return Color.gray.opacity(0.15)   // gray background
+            return Color.gray.opacity(0.15) // Gray background for disabled
         }
+        // Pink/Purple background when selected, white when not
         return isSelected ? Color.ColorsBackgroundLightPurple : .white
-    }
-    
-    private var border: some View {
-        RoundedRectangle(cornerRadius: 20)
-            .stroke(
-                isDisabled ? Color.gray.opacity(0.3) :
-                (isSelected ? Color.ColorsTextPurple01 : Color.gray.opacity(0.2)),
-                lineWidth: 2
-            )
     }
 }
 import SwiftUI
