@@ -108,12 +108,22 @@ public struct PropertyCard: View {
         HStack(alignment: .center, spacing: 12) {
             
             // MARK: - Image
-            Image(image)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 56, height: 56)
-                .clipped()
-                .cornerRadius(10)
+            AsyncImage(url: URL(string: image)) { phase in
+                switch phase {
+                    case .success(let img):
+                        img
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        Image(systemName: "photo")
+                            .foregroundColor(.gray)
+                    default:
+                        ProgressView()
+                    }
+            }
+            .frame(width: 56, height: 56)
+            .clipped()
+            .cornerRadius(10)
             
             // MARK: - Content
             VStack(alignment: .leading, spacing: 4) {
