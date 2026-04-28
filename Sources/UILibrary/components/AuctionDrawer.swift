@@ -2,13 +2,20 @@ import SwiftUI
 
 // MARK: - Model
 public struct DrawerItem: Identifiable {
-    public let id = UUID()
+    public let id : Int
     public let icon: String
     public let title: String
+    public let subtitle: String
     
-    public init(icon: String, title: String) {
+    public init(id: Int,
+                icon: String,
+                title: String,
+                subtitle: String) {
+        self.id = id
         self.icon = icon
         self.title = title
+        self.subtitle = subtitle
+        
     }
 }
 
@@ -155,16 +162,14 @@ struct ContentView: View {
             DrawerView(
                 isOpen: $isDrawerOpen,
                 items: [
-                    DrawerItem(icon: "gear", title: "Settings"),
-                    DrawerItem(icon: "bell", title: "Notifications"),
-                    DrawerItem(icon: "questionmark.circle", title: "Help")
+                    DrawerItem(id: 11, icon: "gear", title: "Settings", subtitle: ""),
+                    DrawerItem(id: 12, icon: "bell", title: "Notifications", subtitle: ""),
+                    DrawerItem(id: 13, icon: "questionmark.circle", title: "Help", subtitle: "")
                 ]
             )
         }
     }
 }
-import SwiftUI
-
 
 public struct CatalogueCards: View {
     public var lotId: String
@@ -237,7 +242,6 @@ public struct CatalogueCards: View {
     
 }
 
-import SwiftUI
 
 public struct CatalogueDropdownView: View {
     
@@ -295,9 +299,9 @@ struct DrawerView_Previews: PreviewProvider {
         DrawerView(
             isOpen: .constant(true),
             items: [
-                DrawerItem(icon: "house", title: "Villa"),
-                DrawerItem(icon: "building", title: "Apartment"),
-                DrawerItem(icon: "leaf", title: "Farmhouse")
+                DrawerItem(id: 11, icon: "gear", title: "Settings", subtitle: ""),
+                DrawerItem(id: 12, icon: "bell", title: "Notifications", subtitle: ""),
+                DrawerItem(id: 13, icon: "questionmark.circle", title: "Help", subtitle: "")
             ]
         )
     }
