@@ -32,6 +32,7 @@ public extension Color {
     static let ColorsAlertsTextOnSuccess: Color = Color(red: 0, green: 0.51, blue: 0.21)
     static let ColorsAlertsTextOnWarning: Color = Color(red: 0.73, green: 0.3, blue: 0)
 
+
     
     
 
@@ -40,8 +41,6 @@ public extension Color {
     // ──────────────────────────────────────────────
     // MARK: - Bid highlight logic — Alert Text Colors
     // ──────────────────────────────────────────────
-    static let ColorsAlertsTextOnSuccess: Color = Color(red: 0, green: 0.51, blue: 0.21)       // #008236
-    static let ColorsAlertsTextOnWarning: Color = Color(red: 0.73, green: 0.30, blue: 0)       // #BB4D00
     static let ColorsAlertsBackgroundSuccess: Color = Color(red: 0.86, green: 0.99, blue: 0.9) // #DCFCE7
 
 

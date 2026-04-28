@@ -1,301 +1,317 @@
 import SwiftUI
 
-// MARK: - Model
+// MARK: - Card State
+
+public enum CatalogueCardState {
+    case normal
+    case selected
+}
+
+// MARK: - Drawer Item Model
+
 public struct DrawerItem: Identifiable {
-    public let id = UUID()
+    public let id: UUID
     public let icon: String
     public let title: String
+    public let lotId: String
+    public let estimate: String
+    public let status: PropertyStatus
     
-    public init(icon: String, title: String) {
+    public init(
+        id: UUID = UUID(),
+        icon: String,
+        title: String,
+        lotId: String,
+        estimate: String,
+        status: PropertyStatus
+    ) {
+        self.id = id
         self.icon = icon
         self.title = title
+        self.lotId = lotId
+        self.estimate = estimate
+        self.status = status
     }
 }
 
 // MARK: - Drawer View
+
 public struct DrawerView: View {
+    @Binding public var isOpen: Bool
+    @State private var selectedItemId: UUID?
+    public let activeItems: [DrawerItem]// ✅ MAIN LIST
+     public let endedItems: [DrawerItem]
+
+
     
-    @Binding var isOpen: Bool
-    
-    private let width: CGFloat
-    private let items: [DrawerItem]
+    public let width: CGFloat
     
     public init(
         isOpen: Binding<Bool>,
-        width: CGFloat = 320,
-        items: [DrawerItem]
+        width: CGFloat = 350,
+        activeItems: [DrawerItem],
+        endedItems: [DrawerItem]
+
     ) {
         self._isOpen = isOpen
         self.width = width
-        self.items = items
+        self.activeItems = activeItems
+        self.endedItems = endedItems
     }
     
     public var body: some View {
         ZStack(alignment: .leading) {
-            
-            // Dim background
             if isOpen {
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation(.spring()) {
-                            isOpen = false
-                        }
+                ZStack(alignment: .topTrailing) {
+                    
+                    Color.black.opacity(0.15)
+                        .ignoresSafeArea()
+                        .onTapGesture { closeDrawer() }
+
+                    Button(action: { closeDrawer() }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(12)
                     }
-                    .transition(.opacity)
-            }
-            
-            // Drawer
-            VStack(alignment: .leading, spacing: 12) {
-                
-                VStack(alignment: .leading){
-                    Text("Auction Catalougue")
-                        .padding(.top,50)
-                        .font(.poppinsBold(size: 20))
+                    .padding(.top, 60)
+                    .padding(.trailing, 20)
                     
-                    Text("4 Auctions")
-                        .font(.poppinsRegular(size: 12))
-                        .foregroundColor(.ColorsTextSecondary)
-                }.padding(.bottom,10)
-                    
-
-                
-                
-                ForEach(items) { item in
-                    CatalogueCards(
-                        lotId: "Lot 1:",
-                        title: "Luxury Villa",
-                        estimate: "3.5M",
-                        status: .upcoming
-                    )
-                    
-                }
-                
-                CatalogueDropdownView(
-                    items: items
-                )
-                
-                Spacer()
-            }
-            .padding()
-            .frame(width: width)
-            .frame(maxHeight: .infinity)
-            .background(Color.white)
-            .ignoresSafeArea()
-            .offset(x: isOpen ? 0 : -width)
-        }
-    }
-}
-
-// MARK: - Menu Item
-public struct DrawerMenuItem: View {
-    
-    var icon: String
-    var text: String
-    
-    public init(icon: String, text: String) {
-        self.icon = icon
-        self.text = text
-    }
-    
-    public var body: some View {
-        HStack {
-            Image(systemName: icon)
-                .foregroundColor(.blue)
-                .frame(width: 30)
-            
-            Text(text)
-                .font(.headline)
-            
-            Spacer()
-        }
-        .padding()
-    }
-}
-
-// MARK: - Main Content View
-struct ContentView: View {
-    
-    @State private var isDrawerOpen: Bool
-    private let isPreview: Bool
-    
-    // Define the items you want to show in the drawer
-    private let drawerItems = [
-        DrawerItem(icon: "house", title: "Villa"),
-        DrawerItem(icon: "building", title: "Apartment"),
-        DrawerItem(icon: "leaf", title: "Farmhouse")
-    ]
-    
-    init(isDrawerOpen: Bool = false, isPreview: Bool = false) {
-        self._isDrawerOpen = State(initialValue: isDrawerOpen)
-        self.isPreview = isPreview
-    }
-    
-    var body: some View {
-        ZStack(alignment: .leading) {
-            
-            // 1. Your Main Navigation Content
-            NavigationView {
-                VStack {
-                    Text("Main App Content")
-                        .font(.title)
-                        .foregroundColor(.gray)
-                }
-                .navigationTitle("Home")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        if !isPreview {
-                            Button {
-                                withAnimation(.spring()) {
-                                    isDrawerOpen.toggle()
-                                }
-                            } label: {
-                                Image(systemName: "line.3.horizontal")
+                    HStack(spacing: 0) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            
+                            // Header
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Auction Catalogue")
+                                    .font(.poppinsBold(size: 20))
+                                
+                                Text("\(activeItems.count) Auctions") // ✅ MAIN COUNT
+                                        .font(.poppinsRegular(size: 12))
+                                        .foregroundColor(.secondary)
                             }
+                            .padding(.top, 80)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 20)
+                            
+                            // Split items
+//                            let visibleItems = Array(items.prefix(3))
+//                            let moreItems = Array(items.dropFirst(3))
+                            
+                            // List
+                            ScrollView {
+                                VStack(spacing: 16) {
+                                    
+                                    // ✅ ACTIVE ITEMS
+                                    ForEach(activeItems) { item in
+                                        CatalogueCards(
+                                            lotId: item.lotId,
+                                            title: item.title,
+                                            estimate: item.estimate,
+                                            status: item.status,
+                                            state: selectedItemId == item.id ? .selected : .normal
+                                        )
+                                        .onTapGesture {
+                                            withAnimation(.spring()) {
+                                                selectedItemId = item.id
+                                            }
+                                        }
+                                    }
+                                    
+                                    // ✅ ENDED AUCTIONS (NOW IN CORRECT POSITION)
+                                    if !endedItems.isEmpty {
+                                        CatalogueDropdownView(items: endedItems)
+                                            .padding(.top, 10)
+                                    }
+                                }
+                                .padding(.top, 10)
+                                .padding(.horizontal, 20)
+                            }
+                            
+                            
+                            
+                            Spacer()
                         }
+                        .frame(width: width)
+                        .background(Color.white)
+                        .transition(.move(edge: .leading))
+                        
+                        Spacer()
                     }
                 }
+                .transition(.opacity)
+                .zIndex(2)
             }
-            
-            // 2. ADD THE DRAWER HERE (It sits on top of the NavigationView)
-            DrawerView(
-                isOpen: $isDrawerOpen,
-                width: 320,
-                items: drawerItems
-            )
+        }
+        .ignoresSafeArea()
+        .animation(.spring(response: 0.4, dampingFraction: 0.85), value: isOpen)
+    }
+    
+    public func closeDrawer() {
+        withAnimation(.spring()) {
+            isOpen = false
         }
     }
 }
 
-import SwiftUI
-
+// MARK: - Catalogue Card
 
 public struct CatalogueCards: View {
     public var lotId: String
     public var title: String
     public var estimate: String
     public var status: PropertyStatus
+    public var state: CatalogueCardState
     
-    public init(lotId: String,
+    public init(
+        lotId: String,
         title: String,
         estimate: String,
-        status: PropertyStatus)
-    {
+        status: PropertyStatus,
+        state: CatalogueCardState = .normal
+    ) {
         self.lotId = lotId
         self.title = title
         self.estimate = estimate
         self.status = status
+        self.state = state
     }
     
     public var body: some View {
-        HStack(alignment: .top, spacing: 10){
+        HStack(alignment: .center, spacing: 10) {
             
-            VStack(alignment: .leading){
+            VStack(alignment: .leading, spacing: 12) {
                 
-                HStack(alignment:.top, spacing: 1){
+                HStack(spacing: 4) {
                     Text(lotId)
-                        .font(.poppinsBold(size: 14))
-                        .foregroundColor(.ColorsTextPrimary)
                     Text(title)
-                        .font(.poppinsBold(size: 14))
-                        .foregroundColor(.ColorsTextPrimary)
-                        
                 }
+                .font(.poppinsBold(size: 14))
+                .foregroundColor(state == .selected ? .ColorsTextPrimary : .ColorsTextSecondary)
                 
-                
-                HStack{
+                HStack {
                     Text("$: \(estimate)")
-                        .foregroundColor(.ColorsTextSecondary)
+                        .font(.poppinsBold(size: 14))
+                        .foregroundColor(.secondary)
+                    
                     StatusChip(status: status)
                 }
-                
-                
-                
             }
+            
             Spacer()
-            Image("arrowRight", bundle: .module)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 16, height: 16)
-                .padding(.horizontal,4)
-                .padding(.top,14)
-
-
             
-            
-
-
-        } .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(16)
-            .cornerRadius(16)
-            .overlay(
+            Image(state == .selected ? "arrowRight" : "arrowRight2nd", bundle: .module)
+                .foregroundColor(state == .selected ? .ColorsButtonPrimary : .ColorsTextSecondary)
+                .padding(.top, 4)
+        }
+        .padding(16)
+        .background(Color.white)
+        .cornerRadius(16)
+        .overlay(
             RoundedRectangle(cornerRadius: 16)
-            .inset(by: 0.5)
-            .stroke(Color.ColorsStrokeDefault, lineWidth: 1)
-            )
-        
-        
-        
-        
+                .stroke(
+                    state == .selected ? Color.ColorsButtonPrimary : Color.ColorsStrokeDefault,
+                    lineWidth: state == .selected ? 2 : 1
+                )
+        )
     }
-    
 }
 
-import SwiftUI
+// MARK: - Dropdown
 
 public struct CatalogueDropdownView: View {
     
     @State private var isExpanded: Bool = false
-    private let items: [DrawerItem]
+    public let items: [DrawerItem]
     
     public init(items: [DrawerItem]) {
         self.items = items
     }
     
     public var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 16) {
             
-            // HEADER
             Button {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     isExpanded.toggle()
                 }
             } label: {
                 HStack {
-                    Text("Auction Catalogue")
-                        .font(.poppinsBold(size: 16))
-                        .foregroundColor(.ColorsTextPrimary)
+                    Text("Ended Auctions (\(items.count))")                        .font(.poppinsBold(size: 16))
                     
                     Spacer()
                     
-                    Image("arrowDown", bundle: .module)
+                    Image(systemName: "chevron.down")
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
-                        .animation(.easeInOut(duration: 0.25), value: isExpanded)
                 }
+                .foregroundColor(.black)
                 .padding(.vertical, 8)
             }
             
-            // DROPDOWN (NO OFFSET, NO FAKE MOTION)
-            VStack(spacing: 8) {
-                ForEach(items) { item in
-                    CatalogueCards(
-                        lotId: "Lot 1",
-                        title: item.title,
-                        estimate: "3.5M",
-                        status: .active
-                    )
+            if isExpanded {
+                VStack(spacing: 16) {
+                    ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                        CatalogueCards(
+                            lotId: item.lotId,
+                            title: item.title,
+                            estimate: item.estimate,
+                            status: item.status
+                        )
+                        .opacity(isExpanded ? 1 : 0)
+                        .offset(y: isExpanded ? 0 : -10)
+                        .animation(
+                            .easeOut(duration: 0.25)
+                            .delay(Double(index) * 0.05),
+                            value: isExpanded
+                        )
+                    }
                 }
             }
-            .frame(height: isExpanded ? nil : 0, alignment: .top)
-            .clipped()
         }
-        .animation(.easeIn(duration: 0.2), value: isExpanded)
     }
 }
 
-// MARK: - PREVIEW
+// MARK: - Demo Content View
+
+public struct ContentView: View {
+    @State public var isDrawerOpen: Bool = true
+    
+    public init() {}
+    
+    public var body: some View {
+        ZStack {
+            NavigationView {
+                Text("Main Content")
+                    .navigationTitle("Dashboard")
+            }
+            
+            DrawerView(
+                isOpen: $isDrawerOpen,
+                activeItems: [
+                    DrawerItem(icon: "1", title: "Luxury Villa", lotId: "Lot 1:", estimate: "3.5M", status: .active),
+                    DrawerItem(icon: "2", title: "Penthouse", lotId: "Lot 2:", estimate: "5.2M", status: .active),
+                    DrawerItem(icon: "3", title: "Beach House", lotId: "Lot 3:", estimate: "2.1M", status: .boughtIn),
+                    DrawerItem(icon: "4", title: "Farmhouse", lotId: "Lot 4:", estimate: "1.8M", status: .boughtIn)
+                ],
+                endedItems: [
+                    DrawerItem(icon: "3", title: "Beach House", lotId: "Lot 3:", estimate: "2.1M", status: .boughtIn),
+                    DrawerItem(icon: "4", title: "Farmhouse", lotId: "Lot 4:", estimate: "1.8M", status: .boughtIn),
+                    DrawerItem(icon: "3", title: "Beach House", lotId: "Lot 3:", estimate: "2.1M", status: .boughtIn),
+                    DrawerItem(icon: "4", title: "Farmhouse", lotId: "Lot 4:", estimate: "1.8M", status: .boughtIn)
+                ]
+            )
+        }
+    }
+}
+
+// MARK: - Fonts
+
+extension Font {
+    public static func poppinsBold(size: CGFloat) -> Font { .system(size: size, weight: .bold) }
+    public static func poppinsRegular(size: CGFloat) -> Font { .system(size: size, weight: .regular) }
+}
+
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(isDrawerOpen: true) // Set to true to see it immediately
+        ContentView()
     }
 }

@@ -105,7 +105,7 @@ public struct PropertyCard: View {
     
     public var body: some View {
         
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .center, spacing: 12) {
             
             // MARK: - Image
             Image(image)
@@ -144,14 +144,7 @@ public struct PropertyCard: View {
                     // ✅ STATUS CHIP (NEW SYSTEM)
                     StatusChip(status: status)
                     
-                    Text(estimatePercentage)
-                        .font(.poppinsSemiBold(size: 12))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 2)
-                        .frame(height: 20)
-                        .background(Color.green.opacity(0.15)) // placeholder
-                        .foregroundColor(Color.green) // placeholder
-                        .cornerRadius(16)
+                    TextualChip(text: "Placeholder", state: .red)
                 }
                 .padding(.top, 3)
             }
@@ -162,7 +155,6 @@ public struct PropertyCard: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18, height: 18)
-                .padding(.top, 22)
                 .padding(.horizontal, 10)
         }
         .padding(12)
