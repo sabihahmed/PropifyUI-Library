@@ -348,11 +348,14 @@ public struct PlaceBidAuctionHammerButton: View {
                     .frame(width: 22, height: 22)
 
                 Text("Place Bid")
-                    .font(.poppinsBold(size: 22))
+                    .frame(height: 24)
+                    .font(.poppinsBold(size: 16))
             }
-            .foregroundColor(.white)
+            
             .frame(maxWidth: .infinity)
-            .padding()
+            .padding(.vertical,16)
+            .foregroundColor(.white)
+            
             .background(Color.ColorsButtonPrimary)
             .cornerRadius(96)
             .padding(.horizontal)

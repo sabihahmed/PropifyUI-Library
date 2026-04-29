@@ -83,7 +83,7 @@ public struct PropertyCard: View {
     public var estimate: String
     public var status: PropertyStatus
     public var estimatePercentage: String
-    public var propertyType: String = "Villa"
+    public var propertyType: String = ""
     
     // MARK: - Init
     public init(image: String,
@@ -92,7 +92,7 @@ public struct PropertyCard: View {
                 estimate: String,
                 status: PropertyStatus,
                 estimatePercentage: String,
-                propertyType: String = "Villa") {
+                propertyType: String = "") {
         
         self.image = image
         self.lot = lot
@@ -139,9 +139,9 @@ public struct PropertyCard: View {
                         .font(.poppinsMedium(size: 14))
                         .lineLimit(1)
                     
-                    Text(propertyType)
-                        .font(.poppinsMedium(size: 14))
-                        .lineLimit(1)
+//                    Text(propertyType)
+//                        .font(.poppinsMedium(size: 14))
+//                        .lineLimit(1)
                 }
                 
                 Text("Propify Estimate: \(estimate)")
