@@ -561,14 +561,22 @@ import SwiftUI
 
 /// Single quick bid pill button.
 /// Handles visual states only (selected / disabled).
-struct QuickBidButton: View {
+public struct QuickBidButton: View {
     
     let title: String
     let isSelected: Bool
     let isDisabled: Bool
     let action: () -> Void
     
-    var body: some View {
+    public init(title: String, isSelected: Bool, isDisabled: Bool, action : @escaping () -> Void) {
+        self.title = title
+        self.isSelected = isSelected
+        self.isDisabled = isDisabled
+        self.action = action
+        
+    }
+    
+    public var body: some View {
         HStack(alignment: .center, spacing: 6) {
             Text("+ \(title)")
                 .font(.system(size: 18, weight: .bold))
