@@ -416,6 +416,7 @@ public struct BidRow: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(Color.ColorsBackgroundLightPurple)
+                    .cornerRadius(99)
                     .overlay(
                         Capsule().stroke(Color.ColorsButtonPrimary, lineWidth: 1)
                     )
@@ -426,6 +427,7 @@ public struct BidRow: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(Color.gray.opacity(0.1))
+                    .cornerRadius(99)
                     .overlay(
                         Capsule().stroke(Color.gray, lineWidth: 1)
                     )

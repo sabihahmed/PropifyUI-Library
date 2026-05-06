@@ -31,6 +31,9 @@ public extension Color {
     static let ColorsTextPurple01: Color = Color(red: 0.79, green: 0.06, blue: 0.72)
     static let ColorsAlertsTextOnSuccess: Color = Color(red: 0, green: 0.51, blue: 0.21)
     static let ColorsAlertsTextOnWarning: Color = Color(red: 0.73, green: 0.3, blue: 0)
+    static let ColorsStrokeMedium: Color = Color(red: 0.83, green: 0.83, blue: 0.83)
+        static let ColorsTagsSilver: Color = Color(red: 0.96, green: 0.98, blue: 0.98)
+        static let ColorsIconsPurple: Color = Color(red: 0.79, green: 0.06, blue: 0.72)
 
 
     
