@@ -1,17 +1,24 @@
 //
+//  SwiftUIView.swift
+//  UILibrary
+//
+//  Created by Sabih Ahmed on 06/05/2026.
+//
+
+//
 //  UiComponents
 //
 
 import SwiftUI
 
-public enum PropertyStatus {
+public enum PropertyStatus2{
     case active
     case closed
     case upcoming
     case boughtIn
 }
 
-public extension PropertyStatus {
+public extension PropertyStatus2 {
     
     var title: String {
         switch self {
@@ -53,7 +60,7 @@ public extension PropertyStatus {
 // oooooo
 import SwiftUI
 
-public struct StatusChip: View {
+public struct StatusChip2: View {
     
     public var status: PropertyStatus
     
@@ -75,7 +82,9 @@ public struct StatusChip: View {
 
 import SwiftUI
 
-public struct PropertyCard: View {
+import SwiftUI
+
+public struct PropertyCard2: View {
     
     public var image: String
     public var lot: String
@@ -85,7 +94,6 @@ public struct PropertyCard: View {
     public var estimatePercentage: String
     public var propertyType: String = ""
     
-    // MARK: - Init
     public init(image: String,
                 lot: String,
                 title: String,
@@ -107,23 +115,13 @@ public struct PropertyCard: View {
         
         HStack(alignment: .center, spacing: 12) {
             
-            // MARK: - Image
-            AsyncImage(url: URL(string: image)) { phase in
-                switch phase {
-                    case .success(let img):
-                        img
-                            .resizable()
-                            .scaledToFill()
-                    case .failure:
-                        Image(systemName: "photo")
-                            .foregroundColor(.gray)
-                    default:
-                        ProgressView()
-                    }
-            }
-            .frame(width: 56, height: 56)
-            .clipped()
-            .cornerRadius(10)
+            // MARK: - Image (CHANGED: using asset from module bundle)
+            Image("villa1", bundle: .module)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 56, height: 56)
+                .clipped()
+                .cornerRadius(10)
             
             // MARK: - Content
             VStack(alignment: .leading, spacing: 4) {
@@ -138,10 +136,6 @@ public struct PropertyCard: View {
                     Text(title)
                         .font(.poppinsMedium(size: 14))
                         .lineLimit(1)
-                    
-//                    Text(propertyType)
-//                        .font(.poppinsMedium(size: 14))
-//                        .lineLimit(1)
                 }
                 
                 Text("Propify Estimate: \(estimate)")
@@ -150,22 +144,14 @@ public struct PropertyCard: View {
                     .foregroundColor(.ColorsTextSecondary)
                 
                 HStack(spacing: 8) {
-                    
-                    // ✅ STATUS CHIP (NEW SYSTEM)
                     StatusChip(status: status)
-                    
                     TextualChip(text: "Placeholder", state: .red)
                 }
                 .padding(.top, 3)
             }
+            .padding(.trailing, 24) // CHANGED: added trailing padding to create space for info icon
             
             Spacer()
-            
-            Image("infoSymbol", bundle: .module)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 18, height: 18)
-                .padding(.horizontal, 10)
         }
         .padding(12)
         .background(Color.white)
@@ -175,12 +161,20 @@ public struct PropertyCard: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.gray.opacity(0.2), lineWidth: 1)
         )
+        // CHANGED: info icon placed via overlay, vertically centered, trailing edge
+        .overlay(alignment: .trailing) {
+            Image("infoSymbol", bundle: .module)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 18, height: 18)
+                .padding(.trailing, 16)
+        }
     }
 }
 
-public struct PropertyCard_Previews: PreviewProvider {
+public struct PropertyCard2_Previews: PreviewProvider {
     public static var previews: some View {
-        PropertyCard(
+        PropertyCard2(
             image: "villa1",
             lot: "Lot 1:",
             title: "Waves - Villa Waves - Villa",
@@ -191,3 +185,4 @@ public struct PropertyCard_Previews: PreviewProvider {
         .previewLayout(.sizeThatFits)
     }
 }
+

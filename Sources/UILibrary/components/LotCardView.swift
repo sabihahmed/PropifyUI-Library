@@ -25,15 +25,8 @@ struct LotCardView: View {
                 .clipped()
             
             VStack(alignment: .leading, spacing: 6) {
-                HStack(alignment: .top) {
-                    Text("LOT \(lotNumber): \(title)")
-                        .font(.system(size: 14, weight: .bold))
-                    
-                    Spacer()
-                    
-                    Image(systemName: "info.circle")
-                        .foregroundColor(.gray)
-                }
+                Text("LOT \(lotNumber): \(title)")
+                    .font(.system(size: 14, weight: .bold))
                 
                 Text("Propify Estimate: \(estimate)")
                     .font(.system(size: 12))
@@ -63,11 +56,17 @@ struct LotCardView: View {
             }
         }
         .padding()
+        .padding(.trailing, 50) // extra space for the info icon
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-    }
-}
+        
+        .overlay(alignment: .trailing) {
+            Image(systemName: "info.circle")
+                .foregroundColor(.gray)
+                .padding(.trailing, 16)
+        }
+    }}
 
 #Preview {
     LotCardView()
