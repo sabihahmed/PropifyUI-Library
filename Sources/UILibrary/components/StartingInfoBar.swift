@@ -22,7 +22,7 @@ struct StartingInfoBar: View {
     var timeTextColor: Color = Color(red: 0.45, green: 0.55, blue: 0.6)
 
     var body: some View {
-        HStack {
+        HStack{
             // Left Tag
             Text(tagText)
                 .font(.poppinsSemiBold(size: 12))
@@ -35,8 +35,9 @@ struct StartingInfoBar: View {
                         .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
                 )
                 .overlay(
-                    Capsule()
-                        .stroke(Color.ColorsStrokeMedium, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 99)
+                .inset(by: 0.5)
+                .stroke(Color.ColorsStrokeMedium, lineWidth: 1)
                 )
 
             Spacer()
@@ -44,10 +45,12 @@ struct StartingInfoBar: View {
             // Center Amount
             HStack(spacing: 6) {
                 Text(currencySymbol)
-                    .font(.system(size: 26, weight: .light)) // Matches the thin currency look
+                    .font(.poppinsBold(size: 26))
+                    .foregroundColor(.ColorsTextPrimary)
                 
                 Text(amountText)
-                    .font(.system(size: 26, weight: .heavy))
+                    .font(.poppinsBold(size: 26))
+                    .foregroundColor(.ColorsTextPrimary)
             }
             .foregroundColor(Color.ColorsTextPrimary)
 
@@ -55,11 +58,13 @@ struct StartingInfoBar: View {
 
             // Right Time
             Text(timeText)
-                .font(.system(size: 15, weight: .medium))
+                .kerning(0.2)
+                .font(.poppinsRegular(size: 12))
                 .foregroundColor(Color.ColorsTextSecondary)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 20)
-        .padding(.vertical, 14)
+        .padding(.vertical, 16)
         .background(Capsule().fill(backgroundColor))
     }
 }
