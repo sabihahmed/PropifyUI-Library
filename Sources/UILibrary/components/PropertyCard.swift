@@ -105,7 +105,7 @@ public struct PropertyCard: View {
     
     public var body: some View {
         
-        HStack(alignment: .center, spacing: 12) {
+        HStack(alignment: .top, spacing: 12) {
             
             // MARK: - Image
             AsyncImage(url: URL(string: image)) { phase in
@@ -158,14 +158,9 @@ public struct PropertyCard: View {
                 }
                 .padding(.top, 3)
             }
+            .padding(.trailing, 24) // CHANGED: added trailing padding to create space for info icon
             
             Spacer()
-            
-            Image("infoSymbol", bundle: .module)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 18, height: 18)
-                .padding(.horizontal, 10)
         }
         .padding(12)
         .background(Color.white)
@@ -175,13 +170,21 @@ public struct PropertyCard: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.gray.opacity(0.2), lineWidth: 1)
         )
+        // CHANGED: info icon placed via overlay, vertically centered, trailing edge
+        .overlay(alignment: .trailing) {
+            Image("infoSymbol", bundle: .module)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 18, height: 18)
+                .padding(.trailing, 16)
+        }
     }
 }
 
 public struct PropertyCard_Previews: PreviewProvider {
     public static var previews: some View {
         PropertyCard(
-            image: "villa1",
+            image: "",
             lot: "Lot 1:",
             title: "Waves - Villa Waves - Villa",
             estimate: "$3.5M",
