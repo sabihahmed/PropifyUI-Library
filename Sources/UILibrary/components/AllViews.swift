@@ -58,7 +58,7 @@ public struct AuctionDetailsView: View {
                         )
                     }
 
-                    YourBidView(yourBidAmount: $vm.userBid)
+                    YourBidView(yourBidAmount: $vm.userBid, isEnabled: true)
                     QuickBidButtonsView(
                         amounts: ["50K", "100K", "200K"],
                         selectedAmount: vm.selectedQuickBid,
@@ -280,10 +280,12 @@ public struct YourBidView: View {
 
     @Binding public var yourBidAmount: Double
     @State private var bidText : String = ""
+    @State private var isEnabled: Bool
     
-    public init(yourBidAmount: Binding<Double>) {
+    public init(yourBidAmount: Binding<Double>, isEnabled: Bool) {
         self._yourBidAmount = yourBidAmount
         _bidText = State(initialValue: String(yourBidAmount.wrappedValue))
+        self.isEnabled = isEnabled
     }
 
     public var body: some View {
@@ -292,12 +294,14 @@ public struct YourBidView: View {
             Text("Your Bid")
                 .font(.poppinsMedium(size: 14))
                 .foregroundColor(.ColorsTextPrimary)
+                
 
             HStack(spacing: 0) {
 
                 Text("$")
                     .frame(width: 50, height: 50)
                     .background(Color.ColorsBackgroundSecondary)
+                    .opacity(!isEnabled ? 0.8 : 0)
                 
                 
                 TextEditor(text: $bidText)
@@ -305,6 +309,8 @@ public struct YourBidView: View {
                     .foregroundColor(.ColorsTextPrimary)
                     .padding(.leading, 12)
                     .keyboardType(.numberPad)
+                    .opacity(!isEnabled ? 0.8 : 0)
+                    .disabled(!isEnabled)
                     
                 
 //                TextField(text: $bidText)
